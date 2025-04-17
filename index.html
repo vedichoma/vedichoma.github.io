@@ -238,25 +238,38 @@
             let currentLanguage = '';
 
             document.getElementById('read-btn').addEventListener('click', () => {
-                console.log("Read button clicked for:", currentManualUrl);
-                const pdfViewer = document.getElementById('pdf-viewer');
-                pdfViewer.src = currentManualUrl;
-                M.Modal.getInstance(document.getElementById('choice-modal')).close();
-                M.Modal.getInstance(document.getElementById('pdf-modal')).open();
-            });
+    if (currentManualUrl) {
+        console.log("Read button clicked for:", currentManualUrl);
+        const pdfViewer = document.getElementById('pdf-viewer');
+        pdfViewer.src = currentManualUrl; // Update iframe source with the manual URL
+        M.Modal.getInstance(document.getElementById('choice-modal')).close(); // Close choice modal
+        M.Modal.getInstance(document.getElementById('pdf-modal')).open(); // Open PDF modal
+    } else {
+        console.error("No manual URL set for reading.");
+        alert("Unable to open the manual. Please try again.");
+    }
+});
 
-            document.getElementById('download-btn').addEventListener('click', () => {
-                console.log("Download button clicked for:", currentManualUrl);
-                const link = document.createElement('a');
-                link.href = currentManualUrl;
-                link.download = `${currentDeityName}-${currentManualType}-${currentLanguage}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                M.Modal.getInstance(document.getElementById('choice-modal')).close();
-            });
-        });
-
+document.getElementById('download-btn').addEventListener('click', () => {
+    if (currentManualUrl) {
+        console.log("Download button clicked for:", currentManualUrl);
+        try {
+            const link = document.createElement('a');
+            link.href = currentManualUrl; // Set the manual URL
+            link.download = `${currentDeityName}-${currentManualType}-${currentLanguage}.pdf`.replace(/[^a-zA-Z0-9_.-]/g, '_'); // Clean up file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the link element
+        } catch (error) {
+            console.error("Error during file download:", error);
+            alert("Unable to download the manual. Please try again.");
+        }
+        M.Modal.getInstance(document.getElementById('choice-modal')).close(); // Close choice modal
+    } else {
+        console.error("No manual URL set for download.");
+        alert("Unable to download the manual. Please try again.");
+    }
+});
         // Full Deity Data
         const deityData = [
             {
